@@ -20,7 +20,6 @@ public class LoadingActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Log.e("log", "시작");
                 Intent mainIntent = new Intent(getBaseContext(), MainActivity.class);
                 startActivity(mainIntent);
                 finish();
