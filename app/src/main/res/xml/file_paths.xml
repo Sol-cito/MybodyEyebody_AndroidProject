@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--        <external-files-path name="my_images" path="Android/data/com.example.mybodyeyebody/files/Pictures/" />-->
+    <!-- 위 path가 official document에 설명되어있는 path이나, fileProvider가 경로를 찾지 못하는 몬제 발생함.-->
+    <!-- 추후 에뮬레이터 말고 실제 폰으로 테스트해보아야 할 듯 -->
+    <external-files-path
+        name="my_images"
+        path="." />
+</paths>

@@ -3,11 +3,7 @@ package com.example.mybodyeyebody;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.provider.MediaStore;
 
 public class MainActivity extends AppCompatActivity {
 
