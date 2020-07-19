@@ -64,10 +64,11 @@ public class PhotoFragment extends Fragment {
             }
         });
         /* To-do */
+        /* https://developer.android.com/training/camera/photobasics.html#java */
         /*  1. MainActivity 클릭 안되게 할 것
-         *  2. 카메라 어플 사용 가능 설정 - > done
+            2. 카메라 허용 권한 묻는 기능 추가
          *  3. API 연동
-         *  4. 사진 찍은거 gallery 에 저장 -> done
+         *  4. 사진 찍은거 gallery 에 저장
          *  5. 사진 찍은거 있으면(preference 활용하면 될듯) fragment 안뜨고 Main으로 가게 만들기
          *  6. 뒤로가기 버튼 누를 시 종료 기능 추가 */
         return rootView;
