@@ -1,15 +1,17 @@
 package com.example.mybodyeyebody;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.provider.MediaStore;
 
 public class MainActivity extends AppCompatActivity {
 
-    PhotoFragment photoFragment;
+    private PhotoFragment photoFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
         replaceToFragment(); // 사진이 DB에 없으면 fragment 호출
     }
 
-    private void replaceToFragment(){
+    private void replaceToFragment() {
         photoFragment = new PhotoFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
