@@ -13,9 +13,11 @@ import androidx.fragment.app.Fragment;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.io.File;
@@ -34,11 +36,22 @@ public class PhotoFragment extends Fragment {
     private ImageView cameraImage;
     private String path_of_takenPhoto;
 
+    private LinearLayout topLayoutOfFragment;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_photo, container, false);
+
+        /* consume the touch event so it can't touch the main activity */
+        topLayoutOfFragment = rootView.findViewById(R.id.topLayoutOfFragment);
+        topLayoutOfFragment.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
 
         cameraImage = rootView.findViewById(R.id.cameraImage);
         cameraImage.setOnClickListener(new View.OnClickListener() {
@@ -65,12 +78,10 @@ public class PhotoFragment extends Fragment {
         });
         /* To-do */
         /* https://developer.android.com/training/camera/photobasics.html#java */
-        /*  1. MainActivity 클릭 안되게 할 것
-            2. 카메라 허용 권한 묻는 기능 추가
+        /*  2. 카메라 허용 권한 묻는 기능 추가
          *  3. API 연동
          *  4. 사진 찍은거 gallery 에 저장
-         *  5. 사진 찍은거 있으면(preference 활용하면 될듯) fragment 안뜨고 Main으로 가게 만들기
-         *  6. 뒤로가기 버튼 누를 시 종료 기능 추가 */
+         *  5. 사진 찍은거 있으면(preference 활용하면 될듯) fragment 안뜨고 Main으로 가게 만들기 */
         return rootView;
     }
 
