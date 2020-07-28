@@ -1,15 +1,12 @@
 package com.example.mybodyeyebody;
 
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.core.content.FileProvider;
-import androidx.fragment.app.Fragment;
-
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -20,23 +17,30 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
+
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 
 public class PhotoFragment extends Fragment {
     /* FINALS */
     private static final int REQUEST_IMAGE_CAPTURE = -1;
+    private static final int REQUEST_CAMERA_PERMISSION = 1000; // my own request code
+
     private static final int SDK_int = Build.VERSION.SDK_INT;
 
     private ImageView cameraImage;
     private String path_of_takenPhoto;
 
     private LinearLayout topLayoutOfFragment;
+
+    private int cameraPermissionCheck;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,32 +61,47 @@ public class PhotoFragment extends Fragment {
         cameraImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final boolean hasCamera;
-                try {
-                    if (SDK_int > 16) {
-                        hasCamera = getPackageManagerMethod().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
-                    } else {
-                        hasCamera = getPackageManagerMethod().hasSystemFeature(PackageManager.FEATURE_CAMERA);
-                    }
-                    if (hasCamera) {
-                        Toast.makeText(getContext(), "카메라 있음", Toast.LENGTH_SHORT).show();
-                        dispatchTakePictureIntent();
-                    } else {
-                        Toast.makeText(getContext(), "카메라 없음...", Toast.LENGTH_SHORT).show();
-                    }
-                } catch (NullPointerException e) {
-                    Toast.makeText(getContext(), "[ERROR] 시스템 에러가 발생하였습니다\n 위치 : PhotoFragment.getPackageManagerMethod()", Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
+                /* check if camera permission has been granted. If not, ask user's permission */
+                cameraPermissionCheck = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA);
+                if (cameraPermissionCheck != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+                } else {
+                    checkIfCameraExists();
                 }
             }
         });
         /* To-do */
         /* https://developer.android.com/training/camera/photobasics.html#java */
-        /*  2. 카메라 허용 권한 묻는 기능 추가
-         *  3. API 연동
+        /*  3. API 연동
          *  4. 사진 찍은거 gallery 에 저장
          *  5. 사진 찍은거 있으면(preference 활용하면 될듯) fragment 안뜨고 Main으로 가게 만들기 */
         return rootView;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        checkIfCameraExists();
+    }
+
+    private void checkIfCameraExists() {
+        final boolean hasCamera;
+        try {
+            if (SDK_int > 16) {
+                hasCamera = getPackageManagerMethod().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
+            } else {
+                hasCamera = getPackageManagerMethod().hasSystemFeature(PackageManager.FEATURE_CAMERA);
+            }
+            if (hasCamera) {
+                Toast.makeText(getContext(), "카메라 있음", Toast.LENGTH_SHORT).show();
+                dispatchTakePictureIntent();
+            } else {
+                Toast.makeText(getContext(), "카메라 없음...", Toast.LENGTH_SHORT).show();
+            }
+        } catch (NullPointerException e) {
+            Toast.makeText(getContext(), "[ERROR] 시스템 에러가 발생하였습니다\n 위치 : PhotoFragment.getPackageManagerMethod()", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
     }
 
     /* get a camera feature by using an intent */
