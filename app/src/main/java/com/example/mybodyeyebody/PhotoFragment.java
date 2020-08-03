@@ -2,13 +2,16 @@ package com.example.mybodyeyebody;
 
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,7 +33,7 @@ import java.util.Date;
 
 public class PhotoFragment extends Fragment {
     /* FINALS */
-    private static final int REQUEST_IMAGE_CAPTURE = -1;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_CAMERA_PERMISSION = 1000; // my own request code
 
     private static final int SDK_int = Build.VERSION.SDK_INT;
@@ -42,11 +45,17 @@ public class PhotoFragment extends Fragment {
 
     private int cameraPermissionCheck;
 
+    /* test image view to put photo taken */
+    private ImageView testImageView;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_photo, container, false);
+
+        testImageView = rootView.findViewById(R.id.testImageView); // thumbnail insert
+
 
         /* consume the touch event so it can't touch the main activity */
         topLayoutOfFragment = rootView.findViewById(R.id.topLayoutOfFragment);
@@ -116,8 +125,10 @@ public class PhotoFragment extends Fragment {
             }
             if (image != null) {
                 Uri imageUri = FileProvider.getUriForFile(getContext(), "com.example.mybodyeyebody.fileprovider", image);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+//                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                if (takePictureIntent.resolveActivity(getPackageManagerMethod()) != null) {
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE); //test
+                }
             }
         }
     }
@@ -140,5 +151,29 @@ public class PhotoFragment extends Fragment {
         );
         path_of_takenPhoto = image.getAbsolutePath();
         return image;
+    }
+
+    @Override
+    public void startActivityForResult(Intent intent, int requestCode) {
+        super.startActivityForResult(intent, requestCode);
+        if (requestCode == REQUEST_IMAGE_CAPTURE) {
+            Toast.makeText(getContext(), "당신의 면상을 찍어주세요!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
+            if (data == null) {
+                Toast.makeText(getContext(), "널임", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "널 아님", Toast.LENGTH_SHORT).show();
+                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+                if (bitmap != null) {
+                    testImageView.setImageBitmap(bitmap);
+                }
+            }
+        }
     }
 }

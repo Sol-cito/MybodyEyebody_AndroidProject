@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/topLayoutOfFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ffffff"
     android:orientation="vertical"
-    android:id="@+id/topLayoutOfFragment"
     tools:context=".PhotoFragment">
 
     <TextView
@@ -31,4 +31,11 @@
         android:layout_marginLeft="20sp"
         android:layout_marginRight="20sp"
         android:src="@drawable/photo_image_temp" />
+
+    <!-- 사진 찍은거 세팅하는 테스트 뷰-->
+    <ImageView
+        android:id="@+id/testImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
 </LinearLayout>
