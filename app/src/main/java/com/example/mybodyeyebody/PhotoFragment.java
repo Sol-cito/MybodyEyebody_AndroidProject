@@ -4,6 +4,7 @@ package com.example.mybodyeyebody;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -35,6 +36,7 @@ public class PhotoFragment extends Fragment {
     /* FINALS */
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_CAMERA_PERMISSION = 1000; // my own request code
+    private static final String PREFERENCE = "getSharedPreference";
 
     private static final int SDK_int = Build.VERSION.SDK_INT;
 
@@ -48,6 +50,8 @@ public class PhotoFragment extends Fragment {
     /* test image view to put photo taken */
     private ImageView testImageView;
 
+    private SharedPreferences sharedPreferences;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -55,7 +59,14 @@ public class PhotoFragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_photo, container, false);
 
         testImageView = rootView.findViewById(R.id.testImageView); // thumbnail insert
-
+        sharedPreferences = getContext().getSharedPreferences("imagePreference", Activity.MODE_PRIVATE);
+        if (sharedPreferences.getBoolean("thumbnailExists", false)) {
+            Toast.makeText(getContext(), "사진 있음", Toast.LENGTH_SHORT).show();
+            /* 찍은 썸네일을 file path로 불러와서 imageView에 뿌려주고, 필요없는 다른 UI들은 숨김처리한다. */
+            /* 사진 찍은 후 얼굴인식 API 적용 */
+            /* 썸네일 보여주면서 "이 사진을 대상으로 하시겠습니까?" 하고 확인 버튼 만듬 -> 누르면 MainActivity로 넘어가고, Main에서 설문조사 시작*/
+            /* '사진 다시찍기' 버튼을 만들어 사진을 다시찍는 기능 추가 */
+        }
 
         /* consume the touch event so it can't touch the main activity */
         topLayoutOfFragment = rootView.findViewById(R.id.topLayoutOfFragment);
@@ -82,7 +93,6 @@ public class PhotoFragment extends Fragment {
         /* To-do */
         /* https://developer.android.com/training/camera/photobasics.html#java */
         /*  3. API 연동
-         *  4. 사진 찍은거 gallery 에 저장
          *  5. 사진 찍은거 있으면(preference 활용하면 될듯) fragment 안뜨고 Main으로 가게 만들기 */
         return rootView;
     }
@@ -167,11 +177,14 @@ public class PhotoFragment extends Fragment {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             if (data == null) {
                 Toast.makeText(getContext(), "널임", Toast.LENGTH_SHORT).show();
-            } else {
+            } else { // 썸네일 세팅
                 Toast.makeText(getContext(), "널 아님", Toast.LENGTH_SHORT).show();
                 Bitmap bitmap = (Bitmap) data.getExtras().get("data");
                 if (bitmap != null) {
                     testImageView.setImageBitmap(bitmap);
+                    SharedPreferences.Editor editor = sharedPreferences.edit(); // test
+                    editor.putBoolean("thumbnailExists", true); // 사진 찍었으면 true로 저장
+                    editor.commit();
                 }
             }
         }
