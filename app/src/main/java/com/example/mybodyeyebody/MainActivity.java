@@ -15,6 +15,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -28,7 +29,9 @@ public class MainActivity extends AppCompatActivity {
     private long backKeyPressedTime;
     private SharedPreferences sharedPreferences;
     private static final String SHAREDPREFERENCE_NAME = "sharedPreferenceForProfile";
-    private String path_of_takenPhoto;
+
+    /* test Button */
+    private Button tryAgainButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +42,14 @@ public class MainActivity extends AppCompatActivity {
         } else {
             displayImageOnScreen();
         }
+
+        tryAgainButton = findViewById(R.id.tryAgainButton);
+        tryAgainButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                replaceToFragment();
+            }
+        });
     }
 
     private void replaceToFragment() {
@@ -72,11 +83,12 @@ public class MainActivity extends AppCompatActivity {
 
     public String getStringFromSharedPreference() {
         createSharedPreference();
-        path_of_takenPhoto = sharedPreferences.getString("path_of_takenPhoto", "");
+        String path_of_takenPhoto = sharedPreferences.getString("path_of_takenPhoto", "");
         return path_of_takenPhoto;
     }
 
     public void displayImageOnScreen() {
+        String path_of_takenPhoto = getStringFromSharedPreference();
         File file = new File(path_of_takenPhoto);
         if (file != null) {
             Log.e("log", "(MainActivity) path_of_takenPhoto : " + path_of_takenPhoto);
