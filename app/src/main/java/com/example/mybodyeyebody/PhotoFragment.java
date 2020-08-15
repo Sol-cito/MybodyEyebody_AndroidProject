@@ -26,9 +26,11 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -51,27 +53,14 @@ public class PhotoFragment extends Fragment {
 
     private int cameraPermissionCheck;
 
-    /* test image view to put photo taken */
+    /* test */
     private ImageView testImageView;
-
-    private SharedPreferences sharedPreferences;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_photo, container, false);
-
-        testImageView = rootView.findViewById(R.id.testImageView); // thumbnail insert
-        sharedPreferences = getContext().getSharedPreferences("imagePreference", Activity.MODE_PRIVATE);
-        if (sharedPreferences.getBoolean("thumbnailExists", false)) {
-            Log.e("log", "사진 저장되어있음");
-            getThumbnail();
-            /* 찍은 썸네일을 file path로 불러와서 imageView에 뿌려주고, 필요없는 다른 UI들은 숨김처리한다. */
-            /* 사진 찍은 후 얼굴인식 API 적용 */
-            /* 썸네일 보여주면서 "이 사진을 대상으로 하시겠습니까?" 하고 확인 버튼 만듬 -> 누르면 MainActivity로 넘어가고, Main에서 설문조사 시작*/
-            /* '사진 다시찍기' 버튼을 만들어 사진을 다시찍는 기능 추가 */
-        }
 
         /* consume the touch event so it can't touch the main activity */
         topLayoutOfFragment = rootView.findViewById(R.id.topLayoutOfFragment);
@@ -99,6 +88,11 @@ public class PhotoFragment extends Fragment {
         /* https://developer.android.com/training/camera/photobasics.html#java */
         /*  3. API 연동
          *  5. 사진 찍은거 있으면(preference 활용하면 될듯) fragment 안뜨고 Main으로 가게 만들기 */
+
+        /* test */
+        testImageView = rootView.findViewById(R.id.testImageView);
+
+
         return rootView;
     }
 
@@ -119,7 +113,7 @@ public class PhotoFragment extends Fragment {
             if (hasCamera) {
                 dispatchTakePictureIntent();
             } else {
-                Toast.makeText(getContext(), "카메라 없음...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "[ERROR] 카메라를 불러오는 데 실패하였습니다\n 위치 : PhotoFragment.checkIfCameraExists()", Toast.LENGTH_SHORT).show();
             }
         } catch (NullPointerException e) {
             Toast.makeText(getContext(), "[ERROR] 시스템 에러가 발생하였습니다\n 위치 : PhotoFragment.getPackageManagerMethod()", Toast.LENGTH_SHORT).show();
@@ -131,23 +125,22 @@ public class PhotoFragment extends Fragment {
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManagerMethod()) != null) {
-            File image = null;
+            File imageFile = null;
             try {
-                image = createImageFile();
+                imageFile = createImageFile();
             } catch (IOException e) {
                 Toast.makeText(getContext(), "[ERROR] 시스템 에러가 발생하였습니다\n 위치 : PhotoFragment.dispatchTakePictureIntent()", Toast.LENGTH_SHORT).show();
             }
-            if (image != null) {
-                imageUri = FileProvider.getUriForFile(getContext(), "com.example.mybodyeyebody.fileprovider", image);
+            if (imageFile != null) {
+                imageUri = FileProvider.getUriForFile(getContext(), "com.example.mybodyeyebody.fileprovider", imageFile);
                 Log.e("log", "이미지 Uri : " + imageUri);
-                takePictureIntent.putExtra("data", imageUri);
-/*                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                /*
                 --> putExtra를 쓰면 camera는 imageUri 에 captured image를 write한다.
                 따라서 아래 onActivityResult 에서의 getExtras는 null이 되며, 썸네일을 잡지 못한다.
                 썸네일을 잡으려면 default로 보내야 함.
                 참고 : https://stackoverflow.com/questions/9890757/android-camera-data-intent-returns-null
                 */
-
                 if (takePictureIntent.resolveActivity(getPackageManagerMethod()) != null) {
                     startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
                 }
@@ -165,18 +158,14 @@ public class PhotoFragment extends Fragment {
         String prefix = "[MybodyEyebody]" + date;
         String suffix = ".jpg";
         File directory = getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES); // 안드로이드 환경변수 중 dir path
-        File image = File.createTempFile(
+        File imageFile = File.createTempFile(
                 prefix, // @NotNull String prefix
                 suffix, // String  Suffix
                 directory// directory
         );
-        path_of_takenPhoto = image.getAbsolutePath();
-        Log.e("log", "사진 찍었을 때 경로 : " + path_of_takenPhoto);
-        /* test */
-        SharedPreferences.Editor editor = sharedPreferences.edit(); // test
-        editor.putString("thumbnail_path", image.getAbsolutePath()); // 사진 찍었으면 true로 저장
-        editor.commit();
-        return image;
+        Log.e("log", "createImageFile에서 파일 dir 경로 : " + directory.toString());
+        path_of_takenPhoto = imageFile.getAbsolutePath();
+        return imageFile;
     }
 
     @Override
@@ -193,32 +182,31 @@ public class PhotoFragment extends Fragment {
 
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             if (data == null) {
-                Toast.makeText(getContext(), "썸네일 널임", Toast.LENGTH_SHORT).show();
-            } else { // 썸네일 세팅
-                Toast.makeText(getContext(), "썸네일 널 아님", Toast.LENGTH_SHORT).show();
-                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-                if (bitmap != null) {
-                    testImageView.setImageBitmap(bitmap);
-                    SharedPreferences.Editor editor = sharedPreferences.edit(); // test
-                    editor.putBoolean("thumbnailExists", true); // 사진 찍었으면 true로 저장
-                    editor.commit();
-                } else {
-                    Log.e("log", "비트맵 널임. data : ");
+                Toast.makeText(getContext(), "[ERROR] 사진을 불러오는 데 실패하였습니다. \n 위치 : PhotoFragment.onActivityResult()", Toast.LENGTH_SHORT).show();
+            } else {
+                Log.e("log", "path_of_takenPhoto : " + path_of_takenPhoto);
+                File file = new File(path_of_takenPhoto);
+                if (file != null) {
+                    Log.e("log", "파일 널 아님!!!!!!!!!!!!!!1");
+                    try {
+                        Bitmap bitmap = MediaStore.Images.Media
+                                .getBitmap(getContext().getContentResolver(), Uri.fromFile(file));
+                        if (bitmap != null) {
+                            Log.e("log", "비트맵 널 아님");
+                            testImageView.setImageBitmap(bitmap);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
+//                finishFragment();
             }
         }
     }
 
-    public void getThumbnail() {
-        String path = sharedPreferences.getString("thumbnail_path", "");
-        File file = new File(path);
-        if (file.exists()) {
-            Bitmap bitmap = BitmapFactory.decodeFile(path);
-            Log.e("log", "앱솔 패스 : " + path);
-            if (bitmap == null) {
-                Log.e("log", "비트맵 널임");
-            }
-            testImageView.setImageBitmap(bitmap);
-        }
+    public void finishFragment() {
+        Log.e("log", "finish Fragment");
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentManager.beginTransaction().detach(PhotoFragment.this).commit();
     }
 }

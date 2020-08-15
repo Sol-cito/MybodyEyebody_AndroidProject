@@ -5,5 +5,5 @@
     <!-- 추후 에뮬레이터 말고 실제 폰으로 테스트해보아야 할 듯 -->
     <external-files-path
         name="my_images"
-        path="." />
+        path="."/>
 </paths>
