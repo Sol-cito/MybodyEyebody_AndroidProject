@@ -37,13 +37,6 @@
             android:layout_marginLeft="20sp"
             android:layout_marginRight="20sp"
             android:src="@drawable/photo_image_temp" />
-
-        <!-- 사진 찍은거 세팅하는 테스트 뷰-->
-        <ImageView
-            android:id="@+id/testImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
     </LinearLayout>
 
 </LinearLayout>
