@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="fatPercentageArray">
+        <item>--체지방률 선택--</item>
+        <item>5%이하</item>
+        <item>6%~9%</item>
+        <item>10%~12%</item>
+        <item>13%~15%</item>
+        <item>16%~20%</item>
+        <item>21%~24%</item>
+        <item>25%이상</item>
+    </string-array>
+</resources>
