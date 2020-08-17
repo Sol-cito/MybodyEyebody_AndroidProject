@@ -9,7 +9,7 @@
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <TextView
             android:layout_width="wrap_content"
@@ -17,16 +17,24 @@
             android:text="메인임"
             android:textSize="100sp" />
         <!-- 사진 찍은거 세팅하는 테스트 뷰-->
-        <ImageView
-            android:id="@+id/testImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </FrameLayout>
 
-    <Button
-        android:id="@+id/tryAgainButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="사진 다시 찍기" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/tryAgainButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="사진 다시 찍기" />
+        </LinearLayout>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/testCircleView"
+            android:layout_width="100dp"
+            android:layout_height="100dp"/>
+
+    </FrameLayout>
 
 </LinearLayout>

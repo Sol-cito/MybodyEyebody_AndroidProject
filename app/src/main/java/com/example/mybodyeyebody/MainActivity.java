@@ -26,6 +26,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URI;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class MainActivity extends AppCompatActivity {
 
     private PhotoFragment photoFragment;
@@ -94,8 +96,8 @@ public class MainActivity extends AppCompatActivity {
         String imageUri = getStringFromSharedPreference();
         Uri uri = Uri.parse(imageUri);
         if (uri != null) {
-            ImageView testImageView = findViewById(R.id.testImageView);
-            testImageView.setImageURI(uri);
+            CircleImageView testCircleView = findViewById(R.id.testCircleView);
+            testCircleView.setImageURI(uri);
             Log.e("log", "(MainActivity) Uri 널 아님");
         } else {
             Log.e("log", "(MainActivity) Uri 널임");
