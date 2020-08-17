@@ -31,12 +31,13 @@
             android:textSize="20sp" />
 
         <ImageView
-            android:id="@+id/cameraImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20sp"
-            android:layout_marginRight="20sp"
-            android:src="@drawable/photo_image_temp" />
+        android:id="@+id/cameraImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20sp"
+        android:layout_marginRight="20sp"
+        android:src="@drawable/photo_image_temp" />
+
     </LinearLayout>
 
 </LinearLayout>

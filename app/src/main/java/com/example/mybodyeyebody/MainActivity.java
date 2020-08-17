@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String SHAREDPREFERENCE_NAME = "sharedPreferenceForProfile";
 
     private Button tryAgainButton;
+    private Button goToTakePictureButton;
 
     private LinearLayout layoutIfProfileExists;
     private LinearLayout layoutIfNoProfile;
@@ -52,13 +53,10 @@ public class MainActivity extends AppCompatActivity {
         layoutIfNoProfile = findViewById(R.id.layoutIfNoProfile);
 
         if (getStringFromSharedPreference() == "") {
+            showNoProfileLayout();
             replaceToFragment(); // 사진이 preference에 없으면 fragment 호출
-            layoutIfProfileExists.setVisibility(View.GONE);
-            layoutIfNoProfile.setVisibility(View.VISIBLE);
         } else {
-            displayImageOnScreen();
-            layoutIfProfileExists.setVisibility(View.VISIBLE);
-            layoutIfNoProfile.setVisibility(View.GONE);
+            showProfileLayout();
         }
 
         tryAgainButton = findViewById(R.id.tryAgainButton);
@@ -68,6 +66,25 @@ public class MainActivity extends AppCompatActivity {
                 replaceToFragment();
             }
         });
+
+        goToTakePictureButton = findViewById(R.id.goToTakePictureButton);
+        goToTakePictureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                replaceToFragment();
+            }
+        });
+    }
+
+    public void showProfileLayout() {
+        layoutIfProfileExists.setVisibility(View.VISIBLE);
+        layoutIfNoProfile.setVisibility(View.GONE);
+        displayImageOnScreen();
+    }
+
+    public void showNoProfileLayout() {
+        layoutIfProfileExists.setVisibility(View.GONE);
+        layoutIfNoProfile.setVisibility(View.VISIBLE);
     }
 
     private void replaceToFragment() {

@@ -166,6 +166,7 @@ public class PhotoFragment extends Fragment {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             Log.e("log", "imageURI : " + imageUri.toString());
             ((MainActivity) getActivity()).setSharedPreferences("imageUri", imageUri.toString());
+            ((MainActivity) getActivity()).showProfileLayout();
             ((MainActivity) getActivity()).displayImageOnScreen();
             finishFragment();
         } else {

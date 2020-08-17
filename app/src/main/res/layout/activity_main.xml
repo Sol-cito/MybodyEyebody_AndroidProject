@@ -9,31 +9,114 @@
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="메인임"
-            android:textSize="100sp" />
-        <!-- 사진 찍은거 세팅하는 테스트 뷰-->
+        android:layout_height="match_parent"
+        android:background="@color/skyBlueBackgroundColor">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:visibility="visible"
+            android:id="@+id/layoutIfNoProfile"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="프로필 사진을 찍어주세요."
+                android:textColor="@color/basicTextColor_black"
+                android:textSize="50sp" />
+
             <Button
-                android:id="@+id/tryAgainButton"
+                android:id="@+id/goToTakePictureButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="사진 다시 찍기" />
+                android:layout_gravity="center"
+                android:background="@color/whiteBackgroundColor"
+                android:text="사진찍으러 가기"
+                android:textColor="@color/basicTextColor_black" />
         </LinearLayout>
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/testCircleView"
-            android:layout_width="100dp"
-            android:layout_height="100dp"/>
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/layoutIfProfileExists"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="당신의 성별과 원하는 체지방률을 선택해주세요"
+                android:textAlignment="center"
+                android:textColor="@color/basicTextColor_black"
+                android:textSize="18sp" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/testCircleView"
+                android:layout_width="200sp"
+                android:layout_height="200sp"
+                android:layout_marginTop="20sp" />
+
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20sp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="50sp"
+                    android:buttonTint="@color/basicTextColor_black"
+                    android:text="남성"
+                    android:textColor="@color/basicTextColor_black" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/basicTextColor_black"
+                    android:text="여성"
+                    android:textColor="@color/basicTextColor_black" />
+
+            </RadioGroup>
+
+            <Spinner
+                android:id="@+id/fatPercentageSpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20sp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/tryAgainButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="30sp"
+                    android:background="@color/whiteBackgroundColor"
+                    android:text="  사진 다시 찍기    "
+                    android:textColor="@color/basicTextColor_black" />
+
+                <Button
+                    android:id="@+id/displaySettingResult"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/whiteBackgroundColor"
+                    android:text="  결과 보기 "
+                    android:textColor="@color/basicTextColor_black" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
 
     </FrameLayout>
 
