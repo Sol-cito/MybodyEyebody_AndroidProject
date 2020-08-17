@@ -41,7 +41,6 @@ public class PhotoFragment extends Fragment {
     private static final int SDK_int = Build.VERSION.SDK_INT;
 
     private ImageView cameraImage;
-    private String path_of_takenPhoto;
     private Uri imageUri;
 
     private LinearLayout topLayoutOfFragment;
@@ -115,7 +114,7 @@ public class PhotoFragment extends Fragment {
                 Toast.makeText(getContext(), "[ERROR] 시스템 에러가 발생하였습니다\n 위치 : PhotoFragment.dispatchTakePictureIntent()", Toast.LENGTH_SHORT).show();
             }
             if (imageFile != null) {
-                imageUri = FileProvider.getUriForFile(getContext(), "com.example.mybodyeyebody.fileprovider", imageFile);
+                imageUri = FileProvider.getUriForFile(getContext(), "com.example.mybodyeyebody", imageFile);
                 Log.e("log", "이미지 Uri : " + imageUri);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                 /*
@@ -148,7 +147,6 @@ public class PhotoFragment extends Fragment {
                 directory// directory
         );
         Log.e("log", "createImageFile에서 파일 dir 경로 : " + directory.toString());
-        path_of_takenPhoto = imageFile.getAbsolutePath();
         return imageFile;
     }
 
@@ -163,22 +161,14 @@ public class PhotoFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
-            if (data == null) {
-                Toast.makeText(getContext(), "[ERROR] 촬영한 사진 data를 불러오는 데 실패하였습니다. \n 위치 : PhotoFragment.onActivityResult()", Toast.LENGTH_SHORT).show();
-            } else {
-                Log.e("log", "path_of_takenPhoto : " + path_of_takenPhoto);
-                File file = new File(path_of_takenPhoto);
-                if (file != null) {
-                    ((MainActivity)getActivity()).setSharedPreferences("path_of_takenPhoto", path_of_takenPhoto);
-                    ((MainActivity)getActivity()).displayImageOnScreen();
-                    finishFragment();
-                } else {
-                    Toast.makeText(getContext(), "[ERROR] 파일이 없습니다. \n 위치 : PhotoFragment.onActivityResult()", Toast.LENGTH_SHORT).show();
-                    Log.e("log", "File is null");
-                }
-            }
+            Log.e("log", "imageURI : " + imageUri.toString());
+            ((MainActivity) getActivity()).setSharedPreferences("imageUri", imageUri.toString());
+            ((MainActivity) getActivity()).displayImageOnScreen();
+            finishFragment();
+        } else {
+            Toast.makeText(getContext(), "[ERROR] 사진을 가져오는 데 실패하였습니다. \n 위치 : PhotoFragment.onActivityResult()", Toast.LENGTH_SHORT).show();
+            Log.e("log", "Request has not succeeded");
         }
     }
 
@@ -187,4 +177,12 @@ public class PhotoFragment extends Fragment {
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         fragmentManager.beginTransaction().detach(PhotoFragment.this).commit();
     }
+
+    /* To do */
+    /* 1. 사진 크기 조절해서 일정 위치에 놓기
+       2. 사진 동그랗게 만들기
+    *  3. 성별, 체지방률 설정 버튼 만들기
+    *  4. 성별, 체지방률 설정 버튼 누르면 다른 프래그먼트 띄우기
+    *  5. 설정 프래그먼트에서 데이터 설정하면 사진 합성하기 ->> 끝!
+    *  6. 보너스 : 얼굴인식 API + 사진 crop + 병맛 motivation fragment 만들기 */
 }

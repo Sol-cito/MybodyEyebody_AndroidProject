@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -21,6 +23,8 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.net.URI;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -83,29 +87,18 @@ public class MainActivity extends AppCompatActivity {
 
     public String getStringFromSharedPreference() {
         createSharedPreference();
-        String path_of_takenPhoto = sharedPreferences.getString("path_of_takenPhoto", "");
-        return path_of_takenPhoto;
+        return sharedPreferences.getString("imageUri", "");
     }
 
     public void displayImageOnScreen() {
-        String path_of_takenPhoto = getStringFromSharedPreference();
-        File file = new File(path_of_takenPhoto);
-        if (file != null) {
-            Log.e("log", "(MainActivity) path_of_takenPhoto : " + path_of_takenPhoto);
-            Log.e("log", "(MainActivity) 파일 널 아님");
-            try {
-                Bitmap bitmap = MediaStore.Images.Media
-                        .getBitmap(getContentResolver(), Uri.fromFile(file));
-                if (bitmap != null) {
-                    Log.e("log", "비트맵 널 아님");
-                    ImageView testImageView = findViewById(R.id.testImageView);
-                    testImageView.setImageBitmap(bitmap);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        String imageUri = getStringFromSharedPreference();
+        Uri uri = Uri.parse(imageUri);
+        if (uri != null) {
+            ImageView testImageView = findViewById(R.id.testImageView);
+            testImageView.setImageURI(uri);
+            Log.e("log", "(MainActivity) Uri 널 아님");
         } else {
-            Log.e("log", "(MainActivity) 파일 널임");
+            Log.e("log", "(MainActivity) Uri 널임");
         }
     }
 }
