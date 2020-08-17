@@ -1,11 +1,13 @@
 package com.example.mybodyeyebody;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -36,17 +38,27 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private static final String SHAREDPREFERENCE_NAME = "sharedPreferenceForProfile";
 
-    /* test Button */
     private Button tryAgainButton;
+
+    private LinearLayout layoutIfProfileExists;
+    private LinearLayout layoutIfNoProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        layoutIfProfileExists = findViewById(R.id.layoutIfProfileExists);
+        layoutIfNoProfile = findViewById(R.id.layoutIfNoProfile);
+
         if (getStringFromSharedPreference() == "") {
             replaceToFragment(); // 사진이 preference에 없으면 fragment 호출
+            layoutIfProfileExists.setVisibility(View.GONE);
+            layoutIfNoProfile.setVisibility(View.VISIBLE);
         } else {
             displayImageOnScreen();
+            layoutIfProfileExists.setVisibility(View.VISIBLE);
+            layoutIfNoProfile.setVisibility(View.GONE);
         }
 
         tryAgainButton = findViewById(R.id.tryAgainButton);
@@ -63,17 +75,48 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.container, photoFragment, "PhotoFragment");
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         fragmentTransaction.commit();
     }
 
     @Override
     public void onBackPressed() {
-        if (System.currentTimeMillis() - backKeyPressedTime > keyPressInterval) {
-            backKeyPressedTime = System.currentTimeMillis();
-            Toast.makeText(this, "뒤로가기를 한 번 더 누르면 종료됩니다", Toast.LENGTH_SHORT).show();
+        if (photoFragment == null || !photoFragment.isAdded()) {
+            if (System.currentTimeMillis() - backKeyPressedTime > keyPressInterval) {
+                backKeyPressedTime = System.currentTimeMillis();
+                Toast.makeText(this, "뒤로가기를 한 번 더 누르면 종료됩니다", Toast.LENGTH_SHORT).show();
+            } else {
+                super.onBackPressed();
+            }
         } else {
-            super.onBackPressed();
+            setDialogBuilder(1);
         }
+    }
+
+    public void setDialogBuilder(int flag) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        if (flag == 1) {
+            alertDialogBuilder.setTitle("사진 찍기 종료");
+            alertDialogBuilder.setMessage("사진 찍기를 취소하시겠습니까?");
+            alertDialogBuilder.setCancelable(false);
+            alertDialogBuilder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.remove(photoFragment);
+                    fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+                    fragmentTransaction.commit();
+                }
+            });
+        }
+        alertDialogBuilder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        alertDialogBuilder.show();
     }
 
     public void createSharedPreference() {
