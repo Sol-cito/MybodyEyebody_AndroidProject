@@ -1,6 +1,5 @@
 package com.example.mybodyeyebody;
 
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
@@ -44,7 +43,7 @@ public class PhotoFragment extends Fragment {
     private ImageView cameraImage;
     private Uri imageUri;
 
-    private LinearLayout topLayoutOfFragment;
+    private LinearLayout topLayoutOfFragment_photo;
 
     private int cameraPermissionCheck;
 
@@ -55,8 +54,8 @@ public class PhotoFragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_photo, container, false);
 
         /* consume the touch event so it can't touch the main activity */
-        topLayoutOfFragment = rootView.findViewById(R.id.topLayoutOfFragment);
-        topLayoutOfFragment.setOnTouchListener(new View.OnTouchListener() {
+        topLayoutOfFragment_photo = rootView.findViewById(R.id.topLayoutOfFragment_photo);
+        topLayoutOfFragment_photo.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 return true;
@@ -78,7 +77,6 @@ public class PhotoFragment extends Fragment {
         });
         return rootView;
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

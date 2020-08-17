@@ -1,6 +1,5 @@
 package com.example.mybodyeyebody;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -9,30 +8,23 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.Toast;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.net.URI;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
 
     private PhotoFragment photoFragment;
+    private ShowResultFragment showResultFragment;
+
     private long keyPressInterval = 1500;
     private long backKeyPressedTime;
     private SharedPreferences sharedPreferences;
@@ -40,9 +32,17 @@ public class MainActivity extends AppCompatActivity {
 
     private Button tryAgainButton;
     private Button goToTakePictureButton;
+    private Button displaySettingResult;
 
     private LinearLayout layoutIfProfileExists;
     private LinearLayout layoutIfNoProfile;
+
+    private Spinner fatPercentageSpinner;
+
+    private int numOfSpinnerPosition;
+    private int genderCode; // 1 : male , 2 : female
+
+    private RadioGroup radioGroup_gender;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (getStringFromSharedPreference() == "") {
             showNoProfileLayout();
-            replaceToFragment(); // 사진이 preference에 없으면 fragment 호출
+            replaceToFragment("PhotoFragment"); // 사진이 preference에 없으면 fragment 호출
         } else {
             showProfileLayout();
         }
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         tryAgainButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                replaceToFragment();
+                replaceToFragment("PhotoFragment");
             }
         });
 
@@ -71,7 +71,47 @@ public class MainActivity extends AppCompatActivity {
         goToTakePictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                replaceToFragment();
+                replaceToFragment("PhotoFragment");
+            }
+        });
+
+        radioGroup_gender = findViewById(R.id.radioGroup_gender);
+        radioGroup_gender.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.radioButton_male) {
+                    genderCode = 1;
+                } else {
+                    genderCode = 2;
+                }
+            }
+        });
+
+        fatPercentageSpinner = findViewById(R.id.fatPercentageSpinner);
+        fatPercentageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                numOfSpinnerPosition = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        displaySettingResult = findViewById(R.id.displaySettingResult);
+        displaySettingResult.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (genderCode == 0) {
+                    Toast.makeText(MainActivity.this, "성별을 선택해주소", Toast.LENGTH_SHORT).show();
+                } else if (numOfSpinnerPosition == 0) {
+                    Toast.makeText(MainActivity.this, "체지방률 선택해주소", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.e("log", "????");
+                    replaceToFragment("ShowResultFragment");
+                }
             }
         });
     }
@@ -87,11 +127,16 @@ public class MainActivity extends AppCompatActivity {
         layoutIfNoProfile.setVisibility(View.VISIBLE);
     }
 
-    private void replaceToFragment() {
-        photoFragment = new PhotoFragment();
+    private void replaceToFragment(String tag) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.container, photoFragment, "PhotoFragment");
+        if (tag == "PhotoFragment") {
+            photoFragment = new PhotoFragment();
+            fragmentTransaction.replace(R.id.container, photoFragment, tag);
+        } else if (tag == "ShowResultFragment") {
+            showResultFragment = new ShowResultFragment();
+            fragmentTransaction.replace(R.id.container, showResultFragment, tag);
+        }
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         fragmentTransaction.commit();
     }
