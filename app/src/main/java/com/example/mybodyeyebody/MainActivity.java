@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         layoutIfProfileExists = findViewById(R.id.layoutIfProfileExists);
         layoutIfNoProfile = findViewById(R.id.layoutIfNoProfile);
 
-        if (getStringFromSharedPreference() == "") {
+        if (getStringFromSharedPreference("imageUri") == "") {
             showNoProfileLayout();
             replaceToFragment("PhotoFragment"); // 사진이 preference에 없으면 fragment 호출
         } else {
@@ -81,8 +82,10 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == R.id.radioButton_male) {
                     genderCode = 1;
+                    setSharedPreferences("genderCode", "male");
                 } else {
                     genderCode = 2;
+                    setSharedPreferences("genderCode", "female");
                 }
             }
         });
@@ -92,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 numOfSpinnerPosition = position;
+                setSharedPreferences("numOfSpinnerPosition", "" + position);
             }
 
             @Override
@@ -109,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
                 } else if (numOfSpinnerPosition == 0) {
                     Toast.makeText(MainActivity.this, "체지방률 선택해주소", Toast.LENGTH_SHORT).show();
                 } else {
-                    Log.e("log", "????");
                     replaceToFragment("ShowResultFragment");
                 }
             }
@@ -141,17 +144,31 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
+    public void removeFragment(String tag) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        if (tag == "PhotoFragment") {
+            fragmentTransaction.remove(photoFragment);
+        } else if (tag == "ShowResultFragment") {
+            fragmentTransaction.remove(showResultFragment);
+        }
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+        fragmentTransaction.commit();
+    }
+
     @Override
     public void onBackPressed() {
-        if (photoFragment == null || !photoFragment.isAdded()) {
+        if (photoFragment != null && photoFragment.isAdded()) {
+            setDialogBuilder(1);
+        } else if (showResultFragment != null && showResultFragment.isAdded()) {
+            removeFragment("ShowResultFragment");
+        } else {
             if (System.currentTimeMillis() - backKeyPressedTime > keyPressInterval) {
                 backKeyPressedTime = System.currentTimeMillis();
                 Toast.makeText(this, "뒤로가기를 한 번 더 누르면 종료됩니다", Toast.LENGTH_SHORT).show();
             } else {
                 super.onBackPressed();
             }
-        } else {
-            setDialogBuilder(1);
         }
     }
 
@@ -164,11 +181,7 @@ public class MainActivity extends AppCompatActivity {
             alertDialogBuilder.setPositiveButton("예", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    FragmentManager fragmentManager = getSupportFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.remove(photoFragment);
-                    fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
-                    fragmentTransaction.commit();
+                    removeFragment("PhotoFragment");
                 }
             });
         }
@@ -192,17 +205,18 @@ public class MainActivity extends AppCompatActivity {
         editor.commit();
     }
 
-    public String getStringFromSharedPreference() {
+    public String getStringFromSharedPreference(String key) {
         createSharedPreference();
-        return sharedPreferences.getString("imageUri", "");
+//        return sharedPreferences.getString("imageUri", "");
+        return sharedPreferences.getString(key, "");
     }
 
     public void displayImageOnScreen() {
-        String imageUri = getStringFromSharedPreference();
+        String imageUri = getStringFromSharedPreference("imageUri");
         Uri uri = Uri.parse(imageUri);
         if (uri != null) {
-            CircleImageView testCircleView = findViewById(R.id.testCircleView);
-            testCircleView.setImageURI(uri);
+            CircleImageView circleView_mainActivity = findViewById(R.id.circleView_mainActivity);
+            circleView_mainActivity.setImageURI(uri);
             Log.e("log", "(MainActivity) Uri 널 아님");
         } else {
             Log.e("log", "(MainActivity) Uri 널임");

@@ -13,11 +13,11 @@
         android:background="@color/skyBlueBackgroundColor">
 
         <LinearLayout
-            android:visibility="visible"
             android:id="@+id/layoutIfNoProfile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="visible">
 
             <TextView
                 android:layout_width="match_parent"
@@ -37,13 +37,13 @@
         </LinearLayout>
 
         <LinearLayout
-            android:visibility="gone"
             android:id="@+id/layoutIfProfileExists"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="match_parent"
@@ -54,7 +54,7 @@
                 android:textSize="18sp" />
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/testCircleView"
+                android:id="@+id/circleView_mainActivity"
                 android:layout_width="200sp"
                 android:layout_height="200sp"
                 android:layout_marginTop="20sp" />
@@ -88,10 +88,10 @@
 
             <Spinner
                 android:id="@+id/fatPercentageSpinner"
-                android:entries="@array/fatPercentageArray"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20sp" />
+                android:layout_marginTop="20sp"
+                android:entries="@array/fatPercentageArray" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -118,10 +118,6 @@
                     android:textColor="@color/basicTextColor_black" />
 
             </LinearLayout>
-
         </LinearLayout>
-
-
     </FrameLayout>
-
 </LinearLayout>

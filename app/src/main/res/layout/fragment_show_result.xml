@@ -1,18 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/topLayoutOfFragment_show_result"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/whiteBackgroundColor"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     tools:context=".ShowResultFragment">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="쇼리절티 프래그먼트"
-        android:textColor="@color/basicTextColor_black"
-        android:textSize="100sp" />
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
 
-</FrameLayout>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/circleView_showResult"
+            android:layout_width="100sp"
+            android:layout_height="100sp"
+            android:layout_marginTop="20sp" />
+
+        <ImageView
+            android:id="@+id/bodyPicture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+</LinearLayout>

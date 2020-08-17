@@ -167,6 +167,8 @@ public class PhotoFragment extends Fragment {
             ((MainActivity) getActivity()).showProfileLayout();
             ((MainActivity) getActivity()).displayImageOnScreen();
             finishFragment();
+        } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_CANCELED) {
+            Toast.makeText(getContext(), "사진 찍기를 취소하였습니다.", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getContext(), "[ERROR] 사진을 가져오는 데 실패하였습니다. \n 위치 : PhotoFragment.onActivityResult()", Toast.LENGTH_SHORT).show();
             Log.e("log", "Request has not succeeded");
